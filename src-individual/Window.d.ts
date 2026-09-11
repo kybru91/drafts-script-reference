@@ -25,6 +25,12 @@ declare class Window {
      * @category Interface
      */
     readonly isActionListVisible: boolean
+    
+    /**
+     * Is the Chat Console side panel is visible.
+     * @category Interface
+     */
+    readonly isChatConsoleVisible: boolean
 
     /**
      * Toggle whether "Float on Top" is enabled for the window, keeping it above other apps. This property only has effect on macOS, and is ignored on iOS.
@@ -100,6 +106,18 @@ declare class Window {
      * @category Interface
      */
     hideActionList(): void
+    
+    /**
+     * Open chat console side bar, optionally providing initial options for new session.
+     * @category Interface
+     */
+    showChatConsole(mode?: modelSessionMode, initialPrompt?: string): void
+    
+    /**
+     * Close chat console side bar.
+     * @category Interface
+     */
+    hideChatConsole(): void
 
     /**
      * Open tag filters side bar.
@@ -125,3 +143,7 @@ declare class Window {
      */
     loadActionBarGroup(actionGroup: ActionGroup): boolean
 }
+/**
+ * The active window. Equivalent shorthand for `app.currentWindow`
+ */
+declare const window: Window

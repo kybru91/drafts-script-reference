@@ -6,6 +6,7 @@
     "tsconfig": "./tsconfig.json",
     "disableSources": true,
     "navigationLinks": {
-        "Drafts User Guide": "https://docs.getdrafts.com"
+        "About Drafts": "https://getdrafts.com",
+        "User Guide": "https://docs.getdrafts.com"
     }
 }

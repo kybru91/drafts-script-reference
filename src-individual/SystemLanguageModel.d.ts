@@ -1,4 +1,6 @@
 /**
+ * > **NOTE:** `SystemLanguageModel` is still supported for backward compatibility, but the newer {@link ModelSession} is more flexible and capable and should be preferred.
+ *
  * Prompt the on-device SystemLanguageModel, part of the [Foundation Models API](https://developer.apple.com/documentation/foundationmodels?changes=_10_5) introduced in iOS/macOS 26. Requires OS 26 and a device that supports (and has enabled) Apple Intelligence.
  * 
  * While not as powerful as larger, cloud-based LLMs, the local model is useful for a variety of smaller tasks, and operates completely privately and locally on the device.

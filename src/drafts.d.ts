@@ -3844,6 +3844,252 @@ declare class MicrosoftToDo {
      */
     constructor(identifier?: string)
 }
+type modelSessionMode = 'onDevice' | 'pcc' | 'claudeSonnet' | 'claudeOpus' | 'gptLuna' | 'gptTerra' | 'gptSol'
+type toolSet = 'drafts' | 'editor' | 'reminders' | 'events' | 'history' | 'files'
+/**
+ * Create generable schema to provide to {@link ModelSession} objects to get back structured, non-string responses.
+ * For more examples, see these sample actions:
+ *
+ * - [Move to Reminders](https://directory.getdrafts.com/a/273): Parses reminders out of selected lines and creates them. Demostrates using multiple `respond` calls on the same session.
+ *
+ * @example
+ *
+ * **Getting Structured Responses**
+ *
+ * ```javascript
+ * // CREATE A PROMPT TO SEND TO MODEL
+ * const prompt = `Generate tag suggestions to use classifying the  * text below:
+ *
+ * ${draft.content}`
+ *
+ * // CREATE MODEL OBJECT
+ * let m = new ModelSession()
+ * // CREATE SCHEMA TO GET BACK STRUCTURED DATA
+ * let schema = ModelSessionSchema.create("Tag Suggestions", "A set of tag suggestions to classify a text.")
+ * schema.addStringArray("tags", "A list of tags to assign the text")
+ * // QUERY THE MODEL
+ * let response = m.respond(prompt, schema)
+ * ```
+ */
+declare class ModelSessionSchema {
+	/**
+	 * Add a string type property
+	 * @param name Human-readable name for property. This will translate to a key for the value in returned object.
+	 * @param description Details on the usage and meaning of the property to guide the model in creation of results.
+	 * @category Values
+	*/
+	addString(name: string, description: string): void
+
+	/**
+	 * Add a string type property
+	 * @param name Human-readable name for property. This will translate to a key for the value in returned object.
+	 * @param description Details on the usage and meaning of the property to guide the model in creation of results.
+	 * @category Values
+	*/
+	addString(name: string, description: string): void
+
+	/**
+	 * Add a boolean type property
+	 * @param name Human-readable name for property. This will translate to a key for the value in returned object.
+	 * @param description Details on the usage and meaning of the property to guide the model in creation of results.
+	 * @category Values
+	*/
+	addBoolean(name: string, description: string): void
+
+	/**
+	 * Add an integer type property
+	 * @param name Human-readable name for property. This will translate to a key for the value in returned object.
+	 * @param description Details on the usage and meaning of the property to guide the model in creation of results.
+	 * @category Values
+	*/
+	addInt(name: string, description: string): void
+
+	/**
+	 * Add a number type property
+	 * @param name Human-readable name for property. This will translate to a key for the value in returned object.
+	 * @param description Details on the usage and meaning of the property to guide the model in creation of results.
+	 * @category Values
+	*/
+	addNumber(name: string, description: string): void
+
+	/**
+	 * Add an array of strings type properties
+	 * @param name Human-readable name for property. This will translate to a key for the value in returned object.
+	 * @param description Details on the usage and meaning of the property to guide the model in creation of results.
+	 * @category Values
+	*/
+	addStringArray(name: string, description: string): void
+
+	/**
+	 * Add an array of boolean type properties
+	 * @param name Human-readable name for property. This will translate to a key for the value in returned object.
+	 * @param description Details on the usage and meaning of the property to guide the model in creation of results.
+	 * @category Values
+	*/
+	addBooleanArray(name: string, description: string): void
+
+	/**
+	 * Add an array of integer type properties
+	 * @param name Human-readable name for property. This will translate to a key for the value in returned object.
+	 * @param description Details on the usage and meaning of the property to guide the model in creation of results.
+	 * @category Values
+	*/
+	addIntArray(name: string, description: string): void
+
+	/**
+	 * Add an array of number type properties
+	 * @param name Human-readable name for property. This will translate to a key for the value in returned object.
+	 * @param description Details on the usage and meaning of the property to guide the model in creation of results.
+	 * @category Values
+	*/
+	addNumberArray(name: string, description: string): void
+
+	/**
+	 * Create new instance
+	 * @param name Human-readable name for property
+	 * @param description Detail regarding the use of the property
+	 * @category Constructor
+	 */
+	static create(name: string, description: string): ModelSessionSchema
+
+	/**
+	 * Create new instance.
+	 * @param name Human-readable name for property
+	 * @param description Detail regarding the use of the property
+	 * @category Constructor
+	 */
+	constructor(name: string, description: string)
+}
+
+
+/**
+ * Prompt the on-device ModelSession, part of the [Foundation Models API](https://developer.apple.com/documentation/foundationmodels?changes=_10_5) introduced in iOS/macOS 27. Requires OS 27 and a device that supports (and has enabled) Apple Intelligence.
+ * 
+ * The `ModelSession` object allows working with both on-device and Private Cloud Compute LLM Models, as well as Claude Sonnet and Opus models.
+ * 
+ * For example actions and more details on selection of model modes, [see User Guide](https://docs.getdrafts.com/docs/actions/ai)
+ * 
+ * > **NOTE:** Each instance of `ModelSession` operates as a session, so repeated calls to `respond` will maintain the context of previous calls – and are cumulatively subject to the token limits.
+ * 
+ * @example
+ * 
+ * **Prompting the On-Device LLM**
+ * 
+ * ```javascript
+ * // create a prompt based on the content of the current draft
+ * let prompt = draft.processTemplate("[[draft]]")
+ * 
+ * // create model instance and submit prompt
+ * let lm = new ModelSession()
+ * lm.mode = "onDevice" // or "pcc" for Private Cloud Compute
+ * 
+ * let response = lm.respond(prompt)
+ * 
+ * if (!response) { // handle failure
+ * 	  alert(lm.lastError)
+ * 	  context.fail()
+ * }
+ * else { // update draft to include response
+ * 	  editor.setText(`${prompt}
+ * 
+ * ===
+ * 
+ * ${response}`)
+ * }
+ * ```
+ */
+declare class ModelSession {
+	/**
+	 * Get a response from the on-device language model.
+	 * @param prompt Text prompt to submit to the model.
+	 * @param schema Optional schema object to get responses in a structured format. If schema is not passed, responses will be in string format.
+	*/
+	respond(prompt: string, schema?: ModelSessionSchema): object
+	
+	/**
+	 * Model mode. Controls active model for the session. Default: `onDevice`
+	 * @category Configuration
+	*/
+	mode: modelSessionMode
+	
+	/**
+	 * Array of text instructions to include in session to guide prompt evaluation.
+	 * @category Configuration
+	*/
+	instructions: string[]
+
+	/**
+	 * Value between 0.0 and 1.0 indicating the temperature to assign the session. Higher values allow the model to be more creative, but less predictable in generating responses.
+	 * @category Configuration
+	*/
+	temperature: number
+	
+	/**
+	 * Add text instruction for the model to the instructions array.
+	 * @category Configuration
+	*/
+	addInstruction(instruction: string): null
+	
+	/**
+	 * Check availability of ModelSession a model session mode on the current device. Allows graceful fall back on devices that do not support Foundation Models, or are running older OS versions.
+	 * @category Modes
+	*/
+	static isAvailable(mode: modelSessionMode): boolean
+	
+	/**
+	 * List all available modes on the device.
+	 * @category Modes
+	*/
+	static availableModes(): modelSessionMode[]
+	
+	/**
+	 * Check whether ModelSession, as configured, is available for use on the current device. Allows graceful fall back on devices that do not support Foundation Models, or are running older OS versions.
+	 * @category Modes
+	*/
+	isAvailable: boolean
+	
+	/**
+	 * Enable or disable tools sets to extend functionality of the model. Only enable tool sets you expect to use, as additional ones impact your token usage. 
+	 
+	 Default: ["drafts", "editor"]
+	 @category Configuration
+	*/
+	toolSets: toolSet[]
+	
+	/**
+	 * Activate a tool set for the session.
+	 * @category Configuration
+	*/
+	addToolSet(toolSet: toolSet): null
+	
+	/**
+	 * A reasoning level supported by the current model in use for the session. The on-device model does not support levels, `pcc` mode, for example, supports "light", "moderate", and "deep"
+	 @category Configuration
+	*/
+	reasoningLevel: string
+
+	/**
+	 * A JSON formatted output of the session's current transcript of prompts and responses. Can be useful in troubleshooting.
+	*/
+	transcript: string
+
+	/**
+	 * If a previous function returned an error, the error description will be available in this property
+	 */
+	lastError?: string
+
+	/**
+	 * Create new instance
+	 * @category Constructor
+	 */
+	static create(mode?: string): ModelSession
+
+	/**
+	 * Create new instance.
+	 * @category Constructor
+	 */
+	constructor()
+}
 /**
  * Drafts includes a full version of the MultiMarkdown 6 engine to render Markdown text to HTML and other supported formats. For details on the meaning of the various options, refer to [MultiMarkdown documentation](https://github.com/fletcher/MultiMarkdown-6).
  * 
@@ -4924,6 +5170,98 @@ declare class Script {
     complete(): void
 }
 /**
+ * See {SelectPrompt} documentation for usage.
+ *
+ */
+declare class SelectPromptItem {
+	/**
+	 * Unique identifier for the item. No two items in the same SelectPrompt should have the same ID.
+	 */
+	id: string
+	
+	/**
+	 * The text to explain the item. Should be descriptive, user-facing value.
+	 */
+	title: string
+	
+	/**
+	 * Optional subtitle text to display smaller below the title. Useful if options require greater levels of explanation to assist the selecting the correct option.
+	 */
+	subtitle?: string
+	
+	/**
+	 * The name of a valid SF Symbol available on the platform. It will be displayed as a small icon next to the item title, if provided. Valid symbol names can be found using Apple's [SF Symbols app](https://developer.apple.com/sf-symbols/) or other third party tools and [online references](https://github.com/andrewtavis/sf-symbols-online).
+	 * @category Display
+	 */
+	symbolName?: string
+} 
+
+/**
+ * Select prompt allow the creation and display of custom dialogs which prompt the user to select from a list of options. The prompt is searchable to filter the list, and keyboard navigable. This is a great option if you need to make a selection from a long list of items.
+ * 
+ * @example
+ * 
+ * ```javascript
+ * let p = new SelectPrompt()
+ * p.message = "Select from the options below" // optional
+ * 
+ * p.addItem("id1", "First Item", "Optional subtitle")
+ * p.addItem("id2", "Second Item", "Optional subtitle")
+ * p.addItem("id3", "Third Item", "Optional subtitle")
+ * 
+ * // if `show` returns false, user hit
+ * // cancel button
+ * if (p.show()) {
+ *   let selectedID = p.selectedItem.id
+ *   // do something with your selection
+ * }
+ * ```
+ *
+ */
+declare class SelectPrompt {
+	/**
+	 * An optional explanatory message to display at the top of the prompt
+	 * @category Display
+	 */
+	message?: string
+
+	/**
+	 * Add an information text label to the prompt. Returns true if item successfully added. If item cannot be added, check action log of details of the error, typically it is because of issues like a duplicate `id` value, or missing parameters.
+	 * @param id Identifier. Should be unique to the items in the prompt.
+	 * @param title User-facing description.
+	 * @param subtitle Optional additional explanatory text.
+	 * @param symbolName Optional SF Symbol name to display as an icon.
+	 * @category Items
+	 */
+	addItem(
+		id: string,
+		title: string,
+		subtitle?: string,
+		symbolName?: string
+	): boolean
+
+	/**
+	 * After the `show()` method is called, this property will contain the item the user selected in the prompt. If the user cancelled without making a selection, it will be null.
+	 * @category Result
+	 */
+	selectedItem?: SelectPromptItem
+
+	/**
+	 * Displays the prompt. Returns `true` if the user selected one of the item, `false` if cancelled without making a selection.
+	 */
+	show(): boolean
+
+	/**
+	 * Create new instance.
+	 */
+	static create(): Prompt
+
+	/**
+	 * Create new instance.
+	 */
+	constructor()
+}
+/**
  * Methods to share via system share sheet.
  * 
  * @example
@@ -5220,6 +5558,8 @@ declare class Syntax {
     static find(type: syntaxType, name: string): Syntax | undefined
 }
 /**
+ * > **NOTE:** `SystemLanguageModel` is still supported for backward compatibility, but the newer {@link ModelSession} is more flexible and capable and should be preferred.
+ *
  * Prompt the on-device SystemLanguageModel, part of the [Foundation Models API](https://developer.apple.com/documentation/foundationmodels?changes=_10_5) introduced in iOS/macOS 26. Requires OS 26 and a device that supports (and has enabled) Apple Intelligence.
  * 
  * While not as powerful as larger, cloud-based LLMs, the local model is useful for a variety of smaller tasks, and operates completely privately and locally on the device.
@@ -6021,6 +6361,12 @@ declare class Window {
      * @category Interface
      */
     readonly isActionListVisible: boolean
+    
+    /**
+     * Is the Chat Console side panel is visible.
+     * @category Interface
+     */
+    readonly isChatConsoleVisible: boolean
 
     /**
      * Toggle whether "Float on Top" is enabled for the window, keeping it above other apps. This property only has effect on macOS, and is ignored on iOS.
@@ -6096,6 +6442,18 @@ declare class Window {
      * @category Interface
      */
     hideActionList(): void
+    
+    /**
+     * Open chat console side bar, optionally providing initial options for new session.
+     * @category Interface
+     */
+    showChatConsole(mode?: modelSessionMode, initialPrompt?: string): void
+    
+    /**
+     * Close chat console side bar.
+     * @category Interface
+     */
+    hideChatConsole(): void
 
     /**
      * Open tag filters side bar.
@@ -6122,6 +6480,9 @@ declare class Window {
     loadActionBarGroup(actionGroup: ActionGroup): boolean
 }
 /**
+ * The active window. Equivalent shorthand for `app.currentWindow`
+ */
+declare const window: Window/**
  * Script integration with WordPress sites via the [WordPress XML-RPC API](https://codex.wordpress.org/XML-RPC_WordPress_API). Currently this object has one runMethod function which can be used to call any method available in the XML-RPC interface.
  *
  * The WordPress API offers access to a wide variety of functions, including posting, but also retrieving information about categories and tags, or reading posts contents.
